@@ -15,6 +15,11 @@ The goal is to provide a reproducible framework that can be adapted to different
 helping users understand the impact of mapping and quantification strategies on RNA-seq analysis.  
 
 ---
+## The case of UTRs 
+
+In many organisms, annotation files such as GFFs typically include untranslated regions (UTRs). However, in some cases these annotations are absent. Incorporating UTRs during read mapping can be particularly useful to reduce multi-mapping in highly conserved regions. To address this limitation, we explore different computational strategies to infer UTRs.
+
+
 
 ## Workflow overview
 
@@ -47,3 +52,4 @@ helping users understand the impact of mapping and quantification strategies on 
          │  (Optional) Sims    │
          │   & evaluation      │
          └─────────────────────┘
+
