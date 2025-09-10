@@ -3,7 +3,7 @@
 This repository provides a practical workflow to explore and benchmark RNA-seq data analysis.  
 It includes scripts and guidelines for key steps such as:
 
-- ✨ **UTR annotation** (if not available in the reference).  
+- ✨ **UTR annotation** (if not available in the reference genome).  
 - 🧬 **Quantification strategies** with selected parameters:  
   - `STAR + Salmon`  
   - `Salmon`  
