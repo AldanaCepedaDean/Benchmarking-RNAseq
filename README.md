@@ -19,7 +19,12 @@ helping users understand the impact of mapping and quantification strategies on 
 
 In many organisms, annotation files such as GFFs typically include untranslated regions (UTRs). However, in some cases these annotations are absent. Incorporating UTRs during read mapping can be particularly useful to reduce multi-mapping in highly conserved regions. To address this limitation, we explore different computational strategies to infer UTRs.
 
+---
+## How much multi-mapping does my organism possess?
 
+During read mapping, multi-mapping reads (i.e., reads that align to multiple genomic locations) can pose a challenge, depending on how each program handles them. Therefore, it is crucial to assess how difficult our organism of interest may be in this regard, particularly when working with short reads. To address this, we propose two different approaches to estimate the extent of multi-mapping using two programs that are widely employed in the scientific community.
+ - STAR
+ - SALMON
 
 ## Workflow overview
 
