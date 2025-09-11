@@ -18,7 +18,14 @@ helping users understand the impact of mapping and quantification strategies on 
 ## The case of UTRs 
 
 In many organisms, annotation files such as GFFs typically include untranslated regions (UTRs). However, in some cases these annotations are absent. Incorporating UTRs during read mapping can be particularly useful to reduce multi-mapping in highly conserved regions. To address this limitation, we explore different computational strategies to infer UTRs.
-There are several existing tools to predict UTRs including GETUTR (Kim et al. 2015), UTRme (Radío et al. 2018), ExUTR (Huang and Teeling, 2017), and F3UTER (Sethi et al. 2022). However, many of these tools are limited to specific organisms or require specific input that may not be available for nonmodel organisms. peaks2utr (Haese-Hill et al. 2023) is now another option for the prediction of UTRs. 
+
+There are several existing tools to predict UTRs including GETUTR (Kim et al. 2015), UTRme (Radío et al. 2018), ExUTR (Huang and Teeling, 2017), and F3UTER (Sethi et al. 2022). However, many of these tools are limited to specific organisms or require specific input that may not be available for nonmodel organisms. peaks2utr (Haese-Hill et al. 2023) is now another option for the prediction of UTRs, independent of the organism. 
+
+**Things that you have to take account when you are working with this**: 
+ - GFF/GTF annotation file (with or without existing 3′ UTR annotations)*
+ - FASTQc of the RNAseq you are working with, or BAM file containing aligned read data (depends of the chosen program)
+ *Some organism, such as Trypanosoma cruzi, doesn't count with a GTF, so gffread it is a good option to create it with a genome file and gff. 
+
 
 ---
 ## How much multi-mapping does my organism possess?
