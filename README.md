@@ -25,7 +25,7 @@ There are several existing tools to predict UTRs including GETUTR (Kim et al. 20
  - GFF/GTF annotation file (with or without existing 3′ UTR annotations)*
  - FASTQc of the RNAseq you are working with, or BAM file containing aligned read data (depends of the chosen program)
 
-*Some organism, such as Trypanosoma cruzi, doesn't count with a GTF, so gffread it is a good option to create it with a genome file and gff. 
+*Some organism, such as Trypanosoma cruzi, doesn't count with a GTF, so *gffread* it is a good option to create it with a genome file and gff. 
 
 
 ---
