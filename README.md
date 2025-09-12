@@ -39,16 +39,24 @@ During read mapping, multi-mapping reads (i.e., reads that align to multiple gen
 
 To address this, we applied different strategies with two widely used tools in the community:  
 
+---
+
 ### STAR
 - Multi-mapping reads were identified using **secondary alignments**.  
 - Unique and multi-mapped reads were separated based on alignment flags and mapping quality scores.  
 - Multi-mapping percentages were calculated as the ratio of multi-mapped reads to total mapped reads, both globally and at the gene level.  
 
+---
+
 ### Salmon
-- Transcript-level alignments were generated with the `--writeMappings` option to produce SAM files.  
-- SAM files were filtered to remove unmapped reads.  
-- Transcript-level counts were extracted by summarizing mappings per transcript (using custom `awk` commands in bash).  
-- Multi-mapping estimates were derived from transcript-level distributions.  
+To obtain transcript-level counts from Salmon, the `--writeMappings` parameter was used to generate a SAM file.  
+
+- **Unique alignments**  
+To count the number of unique alignments per transcript (excluding unmapped reads and SAM headers), the following `awk` command was applied:  
+
+```bash
+awk -F'\t' '$3 != "*" {count[$3]++} END {for (t in count) print t, count[t]}' unique_mappings_Salmon54.sam > unique_counts_per_transcript_Salmon54.txt
+
 
 ---
 
@@ -65,7 +73,8 @@ flowchart TD
 
     C --> C1[--writeMappings → SAM output]
     C1 --> C2[Filter unmapped reads]
-    C2 --> C3[Summarize transcript-level counts]
-    C3 --> C4[Estimate multi-mapping % at transcript level]
+    C2 --> C3[Unique vs. multi-mapped transcripts with awk]
+    C3 --> C4[Transcript-level multi-mapping estimates]
+
 
 
