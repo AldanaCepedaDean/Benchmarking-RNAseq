@@ -55,12 +55,11 @@ To obtain transcript-level counts from Salmon, the `--writeMappings` parameter w
 
 
 ```bash
-awk -F'\t' '$3 != "*" {count[$3]++} END {for (t in count) print t, count[t]}' unique_mappings.sam
+
 ```
 ---
 
 - **Multi-mappings:**  
-A similar approach was applied to count all reported mappings of reads that aligned to multiple locations.
 
 
 ### Workflow Overview
