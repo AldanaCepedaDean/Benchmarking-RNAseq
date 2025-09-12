@@ -68,35 +68,4 @@ flowchart TD
     C2 --> C3[Summarize transcript-level counts]
     C3 --> C4[Estimate multi-mapping % at transcript level]
 
-## Workflow overview
-
-```text
-         ┌─────────────────────┐
-         │   RNA-seq reads     │
-         └─────────┬───────────┘
-                   │
-                   ▼
-         ┌─────────────────────┐
-         │  UTR annotation     │
-         │ (if not available)  │
-         └─────────┬───────────┘
-                   │
-       ┌───────────┼───────────────────┐
-       │           │                   │
-       ▼           ▼                   ▼
-┌─────────────┐ ┌─────────────┐ ┌─────────────┐
-│ STAR+Salmon │ │   Salmon    │ │  Kallisto   │
-└───────┬─────┘ └──────┬──────┘ └──────┬──────┘
-        │              │               │
-        ▼              ▼               ▼
-┌─────────────┐ ┌─────────────┐ ┌─────────────┐
-│ Multimapping│ │ Multimapping│ │   (N/A)     │
-│   analysis  │ │   analysis  │ │             │
-└─────────────┘ └─────────────┘ └─────────────┘
-                   │
-                   ▼
-         ┌─────────────────────┐
-         │  (Optional) Sims    │
-         │   & evaluation      │
-         └─────────────────────┘
 
