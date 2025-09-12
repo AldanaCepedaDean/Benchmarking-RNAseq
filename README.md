@@ -35,9 +35,38 @@ After selecting the appropriate tool, integrate the predicted UTR coordinates in
 ---
 ## How much multi-mapping does my organism possess?
 
-During read mapping, multi-mapping reads (i.e., reads that align to multiple genomic locations) can pose a challenge, depending on how each program handles them. Therefore, it is crucial to assess how difficult our organism of interest may be in this regard, particularly when working with short reads. To address this, we propose two different approaches to estimate the extent of multi-mapping using two programs that are widely employed in the scientific community.
- - STAR
- - SALMON
+During read mapping, multi-mapping reads (i.e., reads that align to multiple genomic locations) can pose a challenge, depending on how each program handles them. Therefore, it is crucial to assess how difficult our organism of interest may be in this regard, particularly when working with short reads.  
+
+To address this, we applied different strategies with two widely used tools in the community:  
+
+### STAR
+- Multi-mapping reads were identified using **secondary alignments**.  
+- Unique and multi-mapped reads were separated based on alignment flags and mapping quality scores.  
+- Multi-mapping percentages were calculated as the ratio of multi-mapped reads to total mapped reads, both globally and at the gene level.  
+
+### Salmon
+- Transcript-level alignments were generated with the `--writeMappings` option to produce SAM files.  
+- SAM files were filtered to remove unmapped reads.  
+- Transcript-level counts were extracted by summarizing mappings per transcript (using custom `awk` commands in bash).  
+- Multi-mapping estimates were derived from transcript-level distributions.  
+
+---
+
+### Workflow Overview
+
+```mermaid
+flowchart TD
+    A[Input RNA-seq reads] --> B[STAR]
+    A --> C[Salmon]
+
+    B --> B1[Secondary alignments]
+    B1 --> B2[Separate unique vs. multi-mapped reads]
+    B2 --> B3[Calculate multi-mapping % globally and per gene]
+
+    C --> C1[--writeMappings → SAM output]
+    C1 --> C2[Filter unmapped reads]
+    C2 --> C3[Summarize transcript-level counts]
+    C3 --> C4[Estimate multi-mapping % at transcript level]
 
 ## Workflow overview
 
