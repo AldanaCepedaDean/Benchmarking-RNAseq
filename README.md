@@ -8,7 +8,7 @@ It includes scripts and guidelines for key steps such as:
   - `STAR + Salmon`  
   - `Salmon`  
   - `Kallisto`  
-- 📊 **Multimapping analysis** (for STAR+Salmon and Salmon).  
+- 📊 **Multi-mapping analysis** (for STAR+Salmon and Salmon).  
 - 🧪 *(Optional, second stage)* Scripts to perform **simulation experiments** to further evaluate quantification accuracy and biases.  
 
 The goal is to provide a reproducible framework that can be adapted to different datasets,  
