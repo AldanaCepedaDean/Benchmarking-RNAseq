@@ -53,7 +53,7 @@ To obtain transcript-level counts from Salmon, the `--writeMappings` parameter w
 
 #### Unique alignments
 ```bash
-awk -F'\t' '$3 != "*" {count[$3]++} END {for (t in count) print t, count[t]}' unique_mappings_Salmon54.sam > unique_counts_per_transcript_Salmon54.txt
+awk -F'\t' '$3 != "*" {count[$3]++} END {for (t in count) print t, count[t]}' unique_mappings.sam
 ```
 ---
 
