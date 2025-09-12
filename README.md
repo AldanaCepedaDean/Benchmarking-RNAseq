@@ -51,13 +51,10 @@ To address this, we applied different strategies with two widely used tools in t
 ### Salmon
 To obtain transcript-level counts from Salmon, the `--writeMappings` parameter was used to generate a SAM file.  
 
-- **Unique alignments**  
-To count the number of unique alignments per transcript (excluding unmapped reads and SAM headers), the following `awk` command was applied:  
-
+#### Unique alignments
 ```bash
 awk -F'\t' '$3 != "*" {count[$3]++} END {for (t in count) print t, count[t]}' unique_mappings_Salmon54.sam > unique_counts_per_transcript_Salmon54.txt
-
-
+```
 ---
 
 ### Workflow Overview
