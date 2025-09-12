@@ -52,7 +52,7 @@ To address this, we applied different strategies with two widely used tools in t
 To obtain transcript-level counts from Salmon, the `--writeMappings` parameter was used to generate a SAM file.  
 
 - **Unique mappings:**  
-Unique alignments per transcript were obtained by excluding unmapped reads and SAM headers, and then counting how many times each transcript (`$3`) appeared in the file.
+
 
 ```bash
 awk -F'\t' '$3 != "*" {count[$3]++} END {for (t in count) print t, count[t]}' unique_mappings.sam
