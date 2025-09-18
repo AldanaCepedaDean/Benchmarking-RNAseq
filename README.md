@@ -47,6 +47,7 @@ To address this, we applied different strategies with two widely used tools in t
 -The percentage of multi-mapped reads was calculated as the proportion of multi-mapped reads over the total number of mapped reads, both at the global and gene-specific levels.
 
 To streamline this process, we developed a script to automate the classification and computation.
+
 ---
 
 ### Salmon
