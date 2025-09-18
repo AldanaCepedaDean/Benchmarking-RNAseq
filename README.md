@@ -43,7 +43,9 @@ To address this, we applied different strategies with two widely used tools in t
 
 ### STAR
 -Multi-mapping reads were detected based on secondary alignments.
+
 -Reads were then classified as either uniquely mapped or multi-mapped according to alignment flags and mapping quality scores.
+
 -The percentage of multi-mapped reads was calculated as the proportion of multi-mapped reads over the total number of mapped reads, both at the global and gene-specific levels.
 
 To streamline this process, we developed a script to automate the classification and computation.
