@@ -51,17 +51,6 @@ To address this, we applied different strategies with two widely used tools in t
 ### Salmon
 To obtain transcript-level counts from Salmon, the `--writeMappings` parameter was used to generate a SAM file.  
 
-- **Unique mappings:**  
-
-
-```bash
-
-```
----
-
-- **Multi-mappings:**  
-
-
 ### Workflow Overview
 
 ```mermaid
