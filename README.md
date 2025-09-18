@@ -5,7 +5,7 @@ It includes scripts and guidelines for key steps such as:
 
 - ✨ **UTR annotation** (if not available in the reference genome).  
 - 📊 **Multi-mapping analysis** (for STAR+Salmon and Salmon).
-- - 🧬 **Quantification strategies** with selected parameters:  
+- 🧬 **Quantification strategies** with selected parameters:  
   - `STAR + Salmon`  
   - `Salmon`  
   - `Kallisto`  
