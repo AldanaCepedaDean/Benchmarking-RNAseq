@@ -71,3 +71,8 @@ flowchart TD
 ```
 ---
 ## Quantification strategies
+
+
+---
+## Optional: Simulation in RNAseq 
+
