@@ -68,4 +68,6 @@ flowchart TD
     C3 --> C4[Transcript-level multi-mapping estimates]
 
 
-
+```
+---
+## Quantification strategies
