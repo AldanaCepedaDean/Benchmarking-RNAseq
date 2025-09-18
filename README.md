@@ -72,24 +72,19 @@ Make sure you have the following tools installed and accessible in your `$PATH`:
 ## Usage
 
 ```bash
-./Multi-mapping:STAR.sh -g <GENOME_INDEX> -a <ANNOTATION> -i <INPUT_DIR> -o <OUTPUT_DIR> [-t THREADS]
+./Multi-mapping:STAR.sh -g <GENOME_INDEX> -a <ANNOTATION> -i <INPUT_DIR> -o <OUTPUT_DIR> -t THREADS
 
 ```
 > [!IMPORTANT]
 >📌 Required parameters
->
 >-g : Path to the STAR genome index directory
->
 >-a : Path to the annotation file (GTF/GFF)
-
--i : Path to the directory containing input reads (*_1.fasta / *_2.fasta)
-
--o : Path to the output directory
+>-i : Path to the directory containing input reads (*_1.fasta / *_2.fasta)
+>-o : Path to the output directory
 
 ⚙️ Optional parameters
 
 -t : Number of threads to use (default = 8)
-
 -h : Show help message
 
 ---
