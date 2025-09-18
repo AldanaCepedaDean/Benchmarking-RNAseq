@@ -54,6 +54,43 @@ The script's name is: Multi-mapping:STAR.sh
 > [!NOTE]
 > To execute it, don´t forget to run previosly: chmod +x
 
+This script runs a full pipeline with **STAR**, **samtools**, and **featureCounts** to calculate the percentage of multimapped reads per gene. It is designed to be user-friendly and can be run either with parameters or interactively.
+
+---
+
+## 📋 Requirements
+
+Make sure you have the following tools installed and accessible in your `$PATH`:
+
+- [STAR](https://github.com/alexdobin/STAR)  
+- [samtools](http://www.htslib.org/)  
+- [Subread (featureCounts)](https://subread.sourceforge.net/)  
+- `awk` and `join` (standard in most Linux distributions)  
+
+---
+
+## Usage
+
+```bash
+./Multi-mapping:STAR.sh -g <GENOME_INDEX> -a <ANNOTATION> -i <INPUT_DIR> -o <OUTPUT_DIR> [-t THREADS]
+
+```
+> [!IMPORTANT]
+>📌 Required parameters
+>
+>-g : Path to the STAR genome index directory
+>
+>-a : Path to the annotation file (GTF/GFF)
+
+-i : Path to the directory containing input reads (*_1.fasta / *_2.fasta)
+
+-o : Path to the output directory
+
+⚙️ Optional parameters
+
+-t : Number of threads to use (default = 8)
+
+-h : Show help message
 
 ---
 
