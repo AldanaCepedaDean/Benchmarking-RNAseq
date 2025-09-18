@@ -80,8 +80,10 @@ Make sure you have the following tools installed and accessible in your `$PATH`:
 >-g : Path to the STAR genome index directory
 > 
 >-a : Path to the annotation file (GTF/GFF)
+>
+>-1   Read 1 FASTQ file
 > 
->-i : Path to the directory containing input reads (*_1.fasta / *_2.fasta)
+>-2   Read 2 FASTQ file
 > 
 >-o : Path to the output directory
 
