@@ -49,7 +49,7 @@ To address this, we applied different strategies with two widely used tools in t
 -The percentage of multi-mapped reads was calculated as the proportion of multi-mapped reads over the total number of mapped reads, both at the global and gene-specific levels.
 
 To streamline this process, we developed a script to automate the classification and computation.
-The script's name is: Multi-mapping:STAR.sh
+The script's name is: **Multi-mapping:STAR.sh**
 
 > [!NOTE]
 > To execute it, don´t forget to run previosly: chmod +x
@@ -65,7 +65,6 @@ Make sure you have the following tools installed and accessible in your `$PATH`:
 - [STAR](https://github.com/alexdobin/STAR)  
 - [samtools](http://www.htslib.org/)  
 - [Subread (featureCounts)](https://subread.sourceforge.net/)  
-- `awk` and `join` (standard in most Linux distributions)  
 
 ---
 
@@ -77,6 +76,7 @@ Make sure you have the following tools installed and accessible in your `$PATH`:
 ```
 > [!IMPORTANT]
 >📌 Required parameters
+> 
 >-g : Path to the STAR genome index directory
 > 
 >-a : Path to the annotation file (GTF/GFF)
@@ -90,6 +90,7 @@ Make sure you have the following tools installed and accessible in your `$PATH`:
 -t : Number of threads to use (default = 8)
 
 -h : Show help message
+
 
 ---
 
