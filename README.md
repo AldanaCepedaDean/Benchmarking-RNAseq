@@ -4,11 +4,11 @@ This repository provides a practical workflow to explore and benchmark RNA-seq d
 It includes scripts and guidelines for key steps such as:
 
 - ✨ **UTR annotation** (if not available in the reference genome).  
-- 🧬 **Quantification strategies** with selected parameters:  
+- 📊 **Multi-mapping analysis** (for STAR+Salmon and Salmon).
+- - 🧬 **Quantification strategies** with selected parameters:  
   - `STAR + Salmon`  
   - `Salmon`  
   - `Kallisto`  
-- 📊 **Multi-mapping analysis** (for STAR+Salmon and Salmon).  
 - 🧪 *(Optional, second stage)* Scripts to perform **simulation experiments** to further evaluate quantification accuracy and biases.  
 
 The goal is to provide a reproducible framework that can be adapted to different datasets,  
