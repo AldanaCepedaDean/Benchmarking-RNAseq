@@ -121,6 +121,64 @@ flowchart TD
 ## Quantification strategies
 
 
----
-## Optional: Simulation in RNAseq 
 
+---
+## Simulations with Polyester
+
+If you want to perform different RNA-seq simulations, we highly recommend using the [**Polyester**](https://github.com/alyssafrazee/polyester) R package.  
+
+### Requirements
+To run this pipeline, you will need:  
+- A **CSV file** containing the gene IDs and the expected number of reads for each gene.  
+- A **FASTA file** with the genome sequences and their corresponding IDs.  
+
+### Example
+Below we provide an example R script to run a simulation experiment with Polyester.  
+⚠️ Remember to replace all file paths in the script with the paths to your own input files.  
+
+
+```r
+################### Simulation in RNA-seq ######################
+
+################### 1. Install packages ########################
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install("polyester")
+
+library(polyester)
+library(Biostrings)
+
+################### 2. Load CDS FASTA ##########################
+CDS_fasta <- readDNAStringSet(filepath = "FASTAPATH")
+writeXStringSet(CDS_fasta, "CDS.fasta")
+
+################### 3. Load read counts table ##################
+tabla_epi <- read.csv("TABLEPATH.CSV", sep = ",")
+
+################### 4. Prepare counts ##########################
+conteos_epi <- cbind.data.frame(tabla_epi$target_id, tabla_epi$est_counts)
+colnames(conteos_epi) <- c("gene_ID", "est_counts")
+
+# Example: use est_counts directly (can be scaled if needed)
+conteos_epi$cant_lecturas <- round(conteos_epi$est_counts, 0)
+
+################### 5. Create count matrix #####################
+countmat_epis <- matrix(conteos_epi$cant_lecturas,
+                        nrow = length(CDS_fasta), ncol = 1)
+
+write.csv(conteos_epi, "NEWTABLEPATH")
+
+################### 6. Run simulation ##########################
+simulate_experiment_countmat("CDS.fasta",
+                             readmat = countmat_epis,
+                             outdir = "OUTPUTPATH.FASTA")
+
+```
+
+> [!NOTE]
+> 
+> -Replace FASTAPATH, TABLEPATH.CSV, NEWTABLEPATH, and OUTPUTPATH.FASTA with the correct paths in your system.
+>
+> -The column est_counts should represent the expected number of reads for each transcript.
+>
+> -You can scale the counts if you want to simulate different sequencing depths (e.g., multiply est_counts by a factor).
