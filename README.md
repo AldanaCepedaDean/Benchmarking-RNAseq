@@ -118,8 +118,81 @@ flowchart TD
 
 ```
 ---
-## Quantification strategies
+## Quantification Strategies
 
+To evaluate the impact of different mapping and quantification strategies on **gene expression estimates in *T. cruzi***, we implemented three main pipelines:  
+
+- **STAR + Salmon (alignment-based mode)**  
+- **Salmon (quasi-mapping mode)**  
+- **Kallisto (pseudo-alignment mode)**  
+
+All reads were mapped or quantified against the *T. cruzi* YC6 reference genome and transcriptome (Wang et al., 2021). Parameters were adjusted to account for the complex genome architecture of *T. cruzi*.  
+
+---
+
+### 1. STAR + Salmon (alignment-based mode)
+
+This strategy combines **STAR** for alignment and **Salmon** for transcript quantification.  
+Paired-end reads are first mapped to the genome, producing both sorted BAM files and transcriptome alignments.  
+These alignments are then passed to Salmon in alignment-based mode.
+
+**Key parameters (STAR):**
+- Allow multiple mappings per read: `--outFilterMultimapNmax 50`  
+- Adapt splice junction detection:  
+  `--outSJfilterReads Unique`  
+  `--outSJfilterOverhangMin 150 150 150 150`  
+  `--outFilterType BySJout`  
+- Mismatch filtering: `--outFilterMismatchNoverReadLmax 0.01`  
+- End-to-end alignment: `--alignEndsType EndToEnd`  
+- Output sorted BAM files: `--outSAMtype BAM SortedByCoordinate`  
+- Output transcriptome alignments: `--quantMode TranscriptomeSAM`  
+
+**Salmon (alignment-based mode):**
+- Input: transcriptome-aligned BAM files from STAR  
+- Run with default parameters  
+
+---
+
+### 2. Salmon (quasi-mapping mode)
+
+This strategy uses **Salmon** directly with its **quasi-mapping algorithm**, without prior genome alignment.  
+
+**Steps:**
+1. Index the genome and GTF annotation.  
+2. Run Salmon with paired-end reads.  
+
+**Key parameters:**
+- Automatic library type detection: `-l A`  
+- Enable improved mapping validation: `--validateMappings`  
+- Default parameters for quantification  
+
+---
+
+### 3. Kallisto (pseudo-alignment mode)
+
+This strategy uses **Kallisto** for fast quantification through pseudo-alignment.  
+Reads are aligned against the *T. cruzi* transcriptome FASTA.  
+
+**Steps:**
+1. Build Kallisto index from transcript FASTA.  
+2. Run Kallisto with paired-end reads.  
+
+**Key parameters:**
+- Default pseudo-alignment settings  
+- Input: transcriptome FASTA  
+
+---
+
+### Post-processing
+
+- **Read mapping statistics:** calculated with `samtools flagstat (v1.20)` for each pipeline.  
+- **Gene-level count matrices:** generated for all strategies.  
+- Genes were classified into major multigene families (MASP, mucins, TS, GP63) or "Other".  
+- Pairwise sequence identity among family members was computed using the **Biopython** `pairwise2` module, with global alignments (`globalxx`).  
+
+---
+
+📌 **Note:** All commands should be adapted to your file paths and computational environment. The provided parameters are optimized for the *T. cruzi* genome, which is highly repetitive and requires careful handling of multi-mapping reads.
 
 
 ---
