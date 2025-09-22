@@ -81,9 +81,9 @@ Make sure you have the following tools installed and accessible in your `$PATH`:
 > 
 >-a : Path to the annotation file (GTF/GFF)
 >
->-1   Read 1 FASTQ file
+>-1   Reads 1 FASTQ file
 > 
->-2   Read 2 FASTQ file
+>-2   Reads 2 FASTQ file
 > 
 >-o : Path to the output directory
 
