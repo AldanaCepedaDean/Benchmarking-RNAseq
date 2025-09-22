@@ -196,7 +196,7 @@ To run this pipeline, you will need:
 - A **FASTA file** with the genome sequences and their corresponding IDs.  
 
 ### Example
-Below we provide an example R script to run a simulation experiment with Polyester.  
+Below we provide an example R script (_Simulation_example.R_) to run a simulation experiment with Polyester.  
 ⚠️ Remember to replace all file paths in the script with the paths to your own input files.  
 
 
