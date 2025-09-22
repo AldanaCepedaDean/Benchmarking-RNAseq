@@ -183,17 +183,7 @@ Reads are aligned against the *T. cruzi* transcriptome FASTA.
 
 ---
 
-### Post-processing
-
-- **Read mapping statistics:** calculated with `samtools flagstat (v1.20)` for each pipeline.  
-- **Gene-level count matrices:** generated for all strategies.  
-- Genes were classified into major multigene families (MASP, mucins, TS, GP63) or "Other".  
-- Pairwise sequence identity among family members was computed using the **Biopython** `pairwise2` module, with global alignments (`globalxx`).  
-
----
-
 📌 **Note:** All commands should be adapted to your file paths and computational environment. The provided parameters are optimized for the *T. cruzi* genome, which is highly repetitive and requires careful handling of multi-mapping reads.
-
 
 ---
 ## Simulations with Polyester
