@@ -1,4 +1,4 @@
-###Comparative overview of strategies for handling multi-mapping reads in RNA-seq
+### Comparative overview of strategies for handling multi-mapping reads in RNA-seq
 
 <details>
 <summary><strong>Bulk RNA-seq approaches</strong></summary>
