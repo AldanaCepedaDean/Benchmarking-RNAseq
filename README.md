@@ -127,7 +127,7 @@ sort ${SAMPLE_OUT}_unique_counts.txt > ${SAMPLE_OUT}_unique_sorted.txt
 sort ${SAMPLE_OUT}_multi_counts.txt > ${SAMPLE_OUT}_multi_sorted.txt
  ```
 
-##Summary
+## Summary
 ```mermaid
 flowchart TD
     A[Input RNA-seq reads] --> B[STAR]
