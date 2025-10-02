@@ -97,9 +97,30 @@ Make sure you have the following tools installed and accessible in your `$PATH`:
 ---
 
 ### Salmon
-To obtain transcript-level counts from Salmon, the `--writeMappings` parameter was used to generate a SAM file.  
+To obtain transcript-level counts from **Salmon**, the `--writeMappings` parameter was used to generate a SAM file containing all alignments.  
+From this file, unique and multi-mapping reads were separated, and transcript counts were calculated as follows:
 
-### Workflow Overview
+Separate unique and multi-mapping reads
+
+# Extract read IDs
+awk '!/^@/ {count[$1]++} END {for (id in count) if (count[id] == 1) print id}' ${SAMPLE_OUT}_all_mappings.sam > ${SAMPLE_OUT}_unique_ids.txt
+awk '!/^@/ {count[$1]++} END {for (id in count) if (count[id] > 1) print id}' ${SAMPLE_OUT}_all_mappings.sam > ${SAMPLE_OUT}_multi_ids.txt
+
+# Create SAM files
+grep -Ff ${SAMPLE_OUT}_unique_ids.txt ${SAMPLE_OUT}_all_mappings.sam > ${SAMPLE_OUT}_unique.sam
+grep -Ff ${SAMPLE_OUT}_multi_ids.txt ${SAMPLE_OUT}_all_mappings.sam > ${SAMPLE_OUT}_multi.sam
+
+
+Count transcripts
+
+awk -F'\t' '$3 != "*" {count[$3]++} END {for (t in count) print t, count[t]}' ${SAMPLE_OUT}_unique.sam > ${SAMPLE_OUT}_unique_counts.txt
+awk -F'\t' '$3 != "*" {count[$3]++} END {for (t in count) print t, count[t]}' ${SAMPLE_OUT}_multi.sam > ${SAMPLE_OUT}_multi_counts.txt
+
+
+Sort counts
+
+sort ${SAMPLE_OUT}_unique_counts.txt > ${SAMPLE_OUT}_unique_sorted.txt
+sort ${SAMPLE_OUT}_multi_counts.txt > ${SAMPLE_OUT}_multi_sorted.txt
 
 ```mermaid
 flowchart TD
