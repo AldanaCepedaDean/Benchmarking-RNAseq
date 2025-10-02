@@ -127,6 +127,11 @@ sort ${SAMPLE_OUT}_unique_counts.txt > ${SAMPLE_OUT}_unique_sorted.txt
 sort ${SAMPLE_OUT}_multi_counts.txt > ${SAMPLE_OUT}_multi_sorted.txt
  ```
 
+### Calculate percentage of multi-mapping reads per transcript
+Finally, the unique and multi-mapping transcript counts were merged using the `join` command. For each transcript, the percentage of multi-mapping reads relative to the total (unique + multi) was calculated with `awk`, and the results were saved into a CSV file.
+
+
+
 ## Summary
 ```mermaid
 flowchart TD
