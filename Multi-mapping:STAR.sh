@@ -40,14 +40,14 @@ while getopts ":g:a:1:2:o:t:h" opt; do
     o) OUT_DIR="$OPTARG" ;;
     t) THREADS="$OPTARG" ;;
     h) usage ;;
-    \?) echo "❌ Invalid option: -$OPTARG" >&2; usage ;;
-    :) echo "❌ Option -$OPTARG requires an argument." >&2; usage ;;
+    \?) echo " Invalid option: -$OPTARG" >&2; usage ;;
+    :) echo "Option -$OPTARG requires an argument." >&2; usage ;;
   esac
 done
 
 # ---------- Verificar argumentos ----------
 if [[ -z "${GENOME_DIR:-}" || -z "${ANNOTATION:-}" || -z "${READ1:-}" || -z "${READ2:-}" || -z "${OUT_DIR:-}" ]]; then
-    echo "❌ Error: missing some obligatory parameters."
+    echo " Error: missing some obligatory parameters."
     usage
 fi
 
@@ -85,7 +85,7 @@ samtools view -b -f 0x100 "$BAM" > "${prefix}_multi.bam"
 
 # ---------- FEATURECOUNTS ----------
 featureCounts -T $THREADS -a "$ANNOTATION" -p -o "${prefix}_unique_counts.txt" "${prefix}_unique.bam" 
-featureCounts -T $THREADS -a "$ANNOTATION" -p -M --countReadPairs -o "${prefix}_multi_counts.txt" "${prefix}_multi.bam" 
+featureCounts -T $THREADS -a "$ANNOTATION" -p -M --countReadPairs --fraction --fracOverlap 0.1 -o "${prefix}_multi_counts.txt" "${prefix}_multi.bam" 
 
 # ---------- Limpieza y cálculo de porcentaje ----------
 awk 'BEGIN{FS=OFS="\t"} NR>2 {print $1, $7}' "${prefix}_unique_counts.txt" > "${prefix}_unique_clean.txt"
@@ -101,4 +101,4 @@ awk 'BEGIN{OFS=","}
         print gene, percent
     }' >> "$FINAL_CSV"
 
-echo "✅ Process finished. Final table: $FINAL_CSV"
+echo "Process finished. Final table: $FINAL_CSV"
