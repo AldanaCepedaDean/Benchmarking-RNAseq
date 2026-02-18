@@ -206,7 +206,7 @@ These alignments are then passed to Salmon in alignment-based mode.
 - Output transcriptome alignments: `--quantMode TranscriptomeSAM`  
 
 > [!IMPORTANT]
->⚠️ **Organism-specific parameterization**
+> _Organism-specific parameterization_
 >
 >These parameters were optimized for _Trypanosoma cruzi_ and must be adjusted for other organisms.
 >
