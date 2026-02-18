@@ -130,26 +130,9 @@ sort ${SAMPLE_OUT}_multi_counts.txt > ${SAMPLE_OUT}_multi_sorted.txt
 ### Calculate percentage of multi-mapping reads per transcript
 Finally, the unique and multi-mapping transcript counts were merged using the `join` command. For each transcript, the percentage of multi-mapping reads relative to the total (unique + multi) was calculated with `awk`, and the results were saved into a CSV file.
 
+---
 
-
-## Summary
-```mermaid
-flowchart TD
-    A[Input RNA-seq reads] --> B[STAR]
-    A --> C[Salmon]
-
-    B --> B1[Secondary alignments]
-    B1 --> B2[Separate unique vs. multi-mapped reads]
-    B2 --> B3[Calculate multi-mapping % globally and per gene]
-
-    C --> C1[--writeMappings → SAM output]
-    C1 --> C2[Filter unmapped reads]
-    C2 --> C3[Unique vs. multi-mapped transcripts with awk]
-    C3 --> C4[Transcript-level multi-mapping estimates]
-
-
-```
-##Bowtie2 
+## Bowtie2 
 
 Although Bowtie 2 is not always the most recommended option for organisms with highly repetitive genomes, it is still possible to track and analyze multi-mapping reads.
 
@@ -171,6 +154,25 @@ samtools view -h sample_sorted.bam \
 | awk '$0 ~ /^@/ || ($0 !~ /XS:i:[0-9]+/ && $1 !~ /^@/)' \
 | samtools view -Sb - \
 > unimapping_reads.bam
+```
+---
+
+## Summary
+```mermaid
+flowchart TD
+    A[Input RNA-seq reads] --> B[STAR]
+    A --> C[Salmon]
+
+    B --> B1[Secondary alignments]
+    B1 --> B2[Separate unique vs. multi-mapped reads]
+    B2 --> B3[Calculate multi-mapping % globally and per gene]
+
+    C --> C1[--writeMappings → SAM output]
+    C1 --> C2[Filter unmapped reads]
+    C2 --> C3[Unique vs. multi-mapped transcripts with awk]
+    C3 --> C4[Transcript-level multi-mapping estimates]
+
+
 ```
 
 ---
