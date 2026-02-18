@@ -205,6 +205,24 @@ These alignments are then passed to Salmon in alignment-based mode.
 - Output sorted BAM files: `--outSAMtype BAM SortedByCoordinate`  
 - Output transcriptome alignments: `--quantMode TranscriptomeSAM`  
 
+> [!IMPORTANT]
+>## ⚠️ Organism-specific parameterization
+>
+>These parameters were optimized for _Trypanosoma cruzi_ and must be adjusted for other organisms.
+>
+>_T. cruzi_: has a highly repetitive genome, particularly due to large multigene families.
+>→ Therefore, --outFilterMultimapNmax 50 was set to allow a high number of valid multi-mapping alignments per read.
+>
+>_T. cruzi_ does not contain canonical introns.
+>→ The splice-related parameters were configured to prevent artificial splice junction detection and avoid spliced alignments.
+>
+>For organisms with:
+>
+>*Complex exon–intron structures → splice-aware parameters should be carefully optimized.
+>
+>*Lower repetitiveness → a smaller --outFilterMultimapNmax value may be more appropriate.
+
+
 **Salmon (alignment-based mode):**
 - Input: transcriptome-aligned BAM files from STAR  
 - Run with default parameters  
