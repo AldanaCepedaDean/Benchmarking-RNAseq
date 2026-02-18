@@ -138,7 +138,7 @@ Although Bowtie 2 is not always the most recommended option for organisms with h
 
 To properly assess multi-mapping, it is essential to enable the -k parameter, which instructs Bowtie2 to report multiple valid alignments per read (when they exist). Without this parameter, only one alignment per read will be reported, potentially underestimating multi-mapping levels.
 
-### Using XS:i Tag 
+### _Using XS:i Tag_ 
 
 ### Extract multi-mapping reads
 ```bash
