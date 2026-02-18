@@ -149,6 +149,30 @@ flowchart TD
 
 
 ```
+##Bowtie2 
+
+Although Bowtie 2 is not always the most recommended option for organisms with highly repetitive genomes, it is still possible to track and analyze multi-mapping reads.
+
+To properly assess multi-mapping, it is essential to enable the -k parameter, which instructs Bowtie2 to report multiple valid alignments per read (when they exist). Without this parameter, only one alignment per read will be reported, potentially underestimating multi-mapping levels.
+
+### Using XS:i Tag 
+
+### Extract multi-mapping reads
+```bash
+samtools view -h sample_sorted.bam \
+| awk '$0 ~ /^@/ || $0 ~ /XS:i:[0-9]+/' \
+| samtools view -Sb - \
+> multimapping_reads.bam
+```
+
+### Extract unique reads
+```bash
+samtools view -h sample_sorted.bam \
+| awk '$0 ~ /^@/ || ($0 !~ /XS:i:[0-9]+/ && $1 !~ /^@/)' \
+| samtools view -Sb - \
+> unimapping_reads.bam
+```
+
 ---
 ## Quantification Strategies
 
