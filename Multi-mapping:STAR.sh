@@ -84,7 +84,7 @@ samtools view -b -F 0x100 "$BAM" > "${prefix}_unique.bam"
 samtools view -b -f 0x100 "$BAM" > "${prefix}_multi.bam"
 
 # ---------- FEATURECOUNTS ----------
-featureCounts -T $THREADS -a "$ANNOTATION" -p -o "${prefix}_unique_counts.txt" "${prefix}_unique.bam" 
+featureCounts -T $THREADS -a "$ANNOTATION" -p -M -o "${prefix}_unique_counts.txt" "${prefix}_unique.bam" 
 featureCounts -T $THREADS -a "$ANNOTATION" -p -M --countReadPairs -o "${prefix}_multi_counts.txt" "${prefix}_multi.bam" 
 
 # ---------- Limpieza y cálculo de porcentaje ----------
