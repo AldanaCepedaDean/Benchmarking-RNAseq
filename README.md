@@ -23,8 +23,7 @@ Multi-mapping reads (i.e., reads that align equally well to more than one locati
 
 We provide approaches to estimate global and per-gene/per-transcript multi-mapping rates with **STAR**, **Salmon** and **Bowtie2**.
 
-➡️ **How to run it:** [docs/multimapping.md](docs/multimapping.md)
-
+➡️ **How to run it:** [multimapping.md](multimapping.md)
 ---
 
 ## 2. Understanding the presence of highly similar genes and sequences
