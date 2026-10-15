@@ -1,6 +1,6 @@
 # Estimating multi-mapping rates
 
-[← Back to README](../README.md)
+[← Back to README](README.md)
 
 The amount of multi-mapping in a dataset depends on the repetitiveness of the genome, the read length and the quality of the annotation. Below we describe how to estimate it with three widely used tools.
 
@@ -8,11 +8,11 @@ The amount of multi-mapping in a dataset depends on the repetitiveness of the ge
 
 ## STAR
 
-- Multi-mapping reads were detected based on secondary alignments. <!-- TODO: check whether this changes to the NH tag -->
-- Reads were classified as uniquely mapped or multi-mapped according to alignment flags and mapping quality scores.
+- Multi-mapping reads were detected with the `NH` tag, which STAR adds to every alignment to report the number of loci the read maps to.
+- Reads with `NH:i:1` were classified as uniquely mapped, and reads with `NH:i` > 1 as multi-mapped.
 - The percentage of multi-mapped reads was calculated as the proportion of multi-mapped reads over the total number of mapped reads, both globally and per gene.
 
-This is automated in the script **`Multi-mapping:STAR_NHtag.sh`**, which runs **STAR**, **samtools** and **featureCounts** and reports the percentage of multi-mapped reads per gene.
+This is automated in the script **`Multi-mapping:STAR.sh`**, which runs **STAR**, **samtools** and **featureCounts** and reports the percentage of multi-mapped reads per gene.
 
 <sub>**Requires** [STAR](https://github.com/alexdobin/STAR), [samtools](http://www.htslib.org/) and [featureCounts (Subread)](https://subread.sourceforge.net/) in your `$PATH`. Make the script executable first with `chmod +x Multi-mapping:STAR.sh`.</sub>
 
@@ -101,7 +101,7 @@ flowchart TD
     A --> C[Salmon]
     A --> D[Bowtie2 -k]
 
-    B --> B1[Secondary alignments]
+    B --> B1[NH tag]
     B1 --> B2[Split uniquely and multi-mapped reads]
     B2 --> B3[Calculate multi-mapping % globally and per gene]
 
