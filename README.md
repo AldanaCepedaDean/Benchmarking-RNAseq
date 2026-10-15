@@ -1,352 +1,137 @@
 # Benchmarking RNA-seq
 
-This repository provides a practical workflow to explore and benchmark RNA-seq data analysis.  
-It includes scripts and guidelines for key steps such as:
+This repository accompanies the manuscript and provides a practical workflow to explore and benchmark RNA-seq data analysis, with a focus on organisms with highly repetitive genomes and large multigene families.
 
-- ✨ **UTR annotation** (if not available in the reference genome).  
-- 📊 **Multi-mapping analysis** (for STAR+Salmon and Salmon).
-- 🧬 **Quantification strategies** with selected parameters:  
-  - `STAR + Salmon`  
-  - `Salmon`  
-  - `Kallisto`  
-- 🧪 *(Optional, second stage)* Scripts to perform **simulation experiments** to further evaluate quantification accuracy and biases.  
+It includes scripts and guidelines to:
 
-The goal is to provide a reproducible framework that can be adapted to different datasets,  
-helping users understand the impact of mapping and quantification strategies on RNA-seq analysis.  
+1. 📊 **Understand multi-mapping rates in your dataset** (STAR, Salmon and Bowtie2).
+2. 🔍 **Understand the presence of highly similar genes and sequences** in your organism.
+3. 🧬 **Choose a quantification strategy**, with parameters selected for repetitive genomes:
+   - `STAR + Salmon`
+   - `Salmon`
+   - `Kallisto`
+4. ✨ **Annotate UTRs**, if they are not available in the reference genome.
+5. 🧪 *(Optional)* **Run simulation experiments** to further evaluate quantification accuracy and biases.
 
----
-## The case of UTRs 
-
-In many organisms, annotation files such as GFFs typically include untranslated regions (UTRs). However, in some cases these annotations are absent. Incorporating UTRs during read mapping can be particularly useful to reduce multi-mapping in highly conserved regions. To address this limitation, we explore different computational strategies to infer UTRs.
-
-Several tools exist for UTR prediction, including **GETUTR** (Kim et al., 2015), [`UTRme`](https://github.com/sradiouy/UTRme) (Radío et al., 2018), **ExUTR** (Huang and Teeling, 2017), and **F3UTER** (Sethi et al., 2022). However, many of these are limited to specific organisms or depend on input formats that may not be available for non-model organisms. More recently, [`peaks2utr`](https://github.com/haessar/peaks2utr) (Haese-Hill et al., 2023) has been introduced as an organism-independent option for UTR prediction.
-
-### Requirements
-- **GFF/GTF annotation file** (with or without existing 3′ UTR annotations)  
-- Either:
-  - **RNA-seq FASTQ files** (for quality assessment), or  
-  - **BAM file** with aligned reads (depending on the selected tool)  
-
-> **Note:** Some organisms, such as *Trypanosoma cruzi*, do not provide GTF files. In such cases, [`gffread`](https://github.com/gpertea/gffread) can be used to generate a GTF from the reference genome and its corresponding GFF.
-
-### Next steps
-After selecting the appropriate tool, integrate the predicted UTR coordinates into the original GFF annotation file.
-
----
-## How much multi-mapping does my organism possess?
-
-During read mapping, multi-mapping reads (i.e., reads that align to multiple genomic locations) can pose a challenge, depending on how each program handles them. Therefore, it is crucial to assess how difficult our organism of interest may be in this regard, particularly when working with short reads.  
-
-To address this, we applied different strategies with two widely used tools in the community:  
+The goal is to provide a reproducible framework that can be adapted to different datasets, helping users understand the impact of repetitiveness, mapping and quantification strategies on RNA-seq analysis.
 
 ---
 
-### STAR
--Multi-mapping reads were detected based on secondary alignments.
+## 1. Understanding multi-mapping rates in your dataset
 
--Reads were then classified as either uniquely mapped or multi-mapped according to alignment flags and mapping quality scores.
+Multi-mapping reads (i.e., reads that align equally well to more than one location) are a major source of uncertainty in RNA-seq quantification. The amount of multi-mapping in a dataset is not a fixed property of the organism: it results from the combination of **genome repetitiveness**, **read length** and **annotation quality** (e.g., whether UTRs are annotated). Estimating it before choosing a pipeline helps anticipate how much each tool's strategy for handling ambiguous reads will affect your results.
 
--The percentage of multi-mapped reads was calculated as the proportion of multi-mapped reads over the total number of mapped reads, both at the global and gene-specific levels.
+We provide approaches to estimate global and per-gene/per-transcript multi-mapping rates with **STAR**, **Salmon** and **Bowtie2**.
 
-To streamline this process, we developed a script to automate the classification and computation.
-The script's name is: **Multi-mapping:STAR.sh**
-
-> [!NOTE]
-> To execute it, don´t forget to run previosly: chmod +x
-
-This script runs a full pipeline with **STAR**, **samtools**, and **featureCounts** to calculate the percentage of multimapped reads per gene. It is designed to be user-friendly and can be run either with parameters or interactively.
+➡️ **How to run it:** [docs/multimapping.md](docs/multimapping.md)
 
 ---
 
-## 📋 Requirements
+## 2. Understanding the presence of highly similar genes and sequences
 
-Make sure you have the following tools installed and accessible in your `$PATH`:
+<!-- TODO: brief description of the approach (e.g., pairwise identity to the closest paralog) and link to the corresponding script/doc. -->
 
-- [STAR](https://github.com/alexdobin/STAR)  
-- [samtools](http://www.htslib.org/)  
-- [Subread (featureCounts)](https://subread.sourceforge.net/)  
+Genes with very high sequence identity to other genes in the genome (e.g., members of multigene families) are especially hard to quantify, since short reads often cannot be unambiguously assigned to a single copy. Knowing which genes of interest fall in this category helps interpret their expression estimates with the appropriate caution.
 
----
-
-## Usage
-
-```bash
-./Multi-mapping:STAR.sh -g <GENOME_INDEX> -a <ANNOTATION> -i <INPUT_DIR> -o <OUTPUT_DIR> -t THREADS
-
-```
-> [!IMPORTANT]
->📌 Required parameters
-> 
->-g : Path to the STAR genome index directory
-> 
->-a : Path to the annotation file (GTF/GFF)
->
->-1   Reads 1 FASTQ file
-> 
->-2   Reads 2 FASTQ file
-> 
->-o : Path to the output directory
-
-⚙️ Optional parameters
-
--t : Number of threads to use (default = 8)
-
--h : Show help message
-
+➡️ **How to run it:** [docs/similar_sequences.md](docs/similar_sequences.md)
 
 ---
 
-## Salmon
-To obtain transcript-level counts from **Salmon**, the `--writeMappings` parameter was used to generate a SAM file containing all alignments.  
-From this file, unique and multi-mapping reads were separated, and transcript counts were calculated as follows:
+## 3. Quantification strategies
 
-### Separate unique and multi-mapping reads
+There is an abundance of strategies for handling multi-mapping reads, both for bulk and single-cell RNA-seq (see our [comparative overview of tools](docs/strategies_comparison.md)).
 
-### Extract read IDs
-```bash
-awk '!/^@/ {count[$1]++} END {for (id in count) if (count[id] == 1) print id}' ${SAMPLE_OUT}_all_mappings.sam > ${SAMPLE_OUT}_unique_ids.txt
-awk '!/^@/ {count[$1]++} END {for (id in count) if (count[id] > 1) print id}' ${SAMPLE_OUT}_all_mappings.sam > ${SAMPLE_OUT}_multi_ids.txt
+As discussed in our manuscript, we found that the best-performing aligner–quantifier combinations, especially for highly repetitive genomes and for genes/transcripts with high sequence similarity, are those that assign multi-mapping reads probabilistically: **STAR + Salmon**, **Salmon** and **Kallisto**. In contrast, count-based approaches such as Bowtie2 + featureCounts strongly overestimated read counts for multigene families. Quantification error increased sharply for genes sharing more than ~98–99% identity with their closest paralog, and Salmon showed consistently lower error than Kallisto in that range.
 
-```
-### Create SAM files
-```bash
-grep -Ff ${SAMPLE_OUT}_unique_ids.txt ${SAMPLE_OUT}_all_mappings.sam > ${SAMPLE_OUT}_unique.sam
-grep -Ff ${SAMPLE_OUT}_multi_ids.txt ${SAMPLE_OUT}_all_mappings.sam > ${SAMPLE_OUT}_multi.sam
-```
+<!-- TODO: replace/adjust this paragraph with the wording from the final abstract/results of the manuscript. -->
 
-### Count transcripts
-```bash
-awk -F'\t' '$3 != "*" {count[$3]++} END {for (t in count) print t, count[t]}' ${SAMPLE_OUT}_unique.sam > ${SAMPLE_OUT}_unique_counts.txt
-awk -F'\t' '$3 != "*" {count[$3]++} END {for (t in count) print t, count[t]}' ${SAMPLE_OUT}_multi.sam > ${SAMPLE_OUT}_multi_counts.txt
+All reads were mapped or quantified against the *T. cruzi* YC6 reference genome and transcriptome (Wang et al., 2021). Parameters were adjusted to account for the complex genome architecture of *T. cruzi*.
 
-```
-### Sort counts
-```bash
+### 3.1 STAR + Salmon (alignment-based mode)
 
-sort ${SAMPLE_OUT}_unique_counts.txt > ${SAMPLE_OUT}_unique_sorted.txt
-sort ${SAMPLE_OUT}_multi_counts.txt > ${SAMPLE_OUT}_multi_sorted.txt
- ```
+This strategy combines **STAR** for alignment and **Salmon** for transcript quantification. It is a convenient choice when you need to inspect the actual alignments or require them for other downstream analyses (e.g., QC, coverage, variant calling), while still benefiting from Salmon's probabilistic quantification.
 
-### Calculate percentage of multi-mapping reads per transcript
-Finally, the unique and multi-mapping transcript counts were merged using the `join` command. For each transcript, the percentage of multi-mapping reads relative to the total (unique + multi) was calculated with `awk`, and the results were saved into a CSV file.
-
----
-
-## Bowtie2 
-
-Although Bowtie 2 is not always the most recommended option for organisms with highly repetitive genomes, it is still possible to track and analyze multi-mapping reads.
-
-To properly assess multi-mapping, it is essential to enable the -k parameter, which instructs Bowtie2 to report multiple valid alignments per read (when they exist). Without this parameter, only one alignment per read will be reported, potentially underestimating multi-mapping levels.
-
-### _Using XS:i Tag_ 
-
-### Extract multi-mapping reads
-```bash
-samtools view -h sample_sorted.bam \
-| awk '$0 ~ /^@/ || $0 ~ /XS:i:[0-9]+/' \
-| samtools view -Sb - \
-> multimapping_reads.bam
-```
-
-### Extract unique reads
-```bash
-samtools view -h sample_sorted.bam \
-| awk '$0 ~ /^@/ || ($0 !~ /XS:i:[0-9]+/ && $1 !~ /^@/)' \
-| samtools view -Sb - \
-> unimapping_reads.bam
-```
----
-
-## Summary
-```mermaid
-flowchart TD
-    A[Input RNA-seq reads] --> B[STAR]
-    A --> C[Salmon]
-
-    B --> B1[Secondary alignments]
-    B1 --> B2[Separate unique vs. multi-mapped reads]
-    B2 --> B3[Calculate multi-mapping % globally and per gene]
-
-    C --> C1[--writeMappings → SAM output]
-    C1 --> C2[Filter unmapped reads]
-    C2 --> C3[Unique vs. multi-mapped transcripts with awk]
-    C3 --> C4[Transcript-level multi-mapping estimates]
-
-
-```
-
----
-## Quantification Strategies
-
-To evaluate the impact of different mapping and quantification strategies on **gene expression estimates in *T. cruzi***, we implemented three main pipelines:  
-
-- **STAR + Salmon (alignment-based mode)**  
-- **Salmon (quasi-mapping mode)**  
-- **Kallisto (pseudo-alignment mode)**  
-
-All reads were mapped or quantified against the *T. cruzi* YC6 reference genome and transcriptome (Wang et al., 2021). Parameters were adjusted to account for the complex genome architecture of *T. cruzi*.  
-
----
-
-### 1. STAR + Salmon (alignment-based mode)
-
-This strategy combines **STAR** for alignment and **Salmon** for transcript quantification.  
-Paired-end reads are first mapped to the genome, producing both sorted BAM files and transcriptome alignments.  
-These alignments are then passed to Salmon in alignment-based mode.
+Paired-end reads are first aligned to the reference genome with STAR, which outputs coordinate-sorted genomic BAM files. Using the gene annotation, STAR also projects these genomic alignments onto transcript coordinates, producing a separate transcriptome BAM file. This transcriptome-projected BAM is then used as input for Salmon in alignment-based mode.
 
 **Key parameters (STAR):**
-- Allow multiple mappings per read: `--outFilterMultimapNmax 50`  
-- Adapt splice junction detection:  
-  `--outSJfilterReads Unique`  
-  `--outSJfilterOverhangMin 150 150 150 150`  
-  `--outFilterType BySJout`  
-- Mismatch filtering: `--outFilterMismatchNoverReadLmax 0.01`  
-- End-to-end alignment: `--alignEndsType EndToEnd`  
-- Output sorted BAM files: `--outSAMtype BAM SortedByCoordinate`  
-- Output transcriptome alignments: `--quantMode TranscriptomeSAM`  
+- Allow multiple mappings per read: `--outFilterMultimapNmax 50`
+- Adapt splice junction detection:
+  `--outSJfilterReads Unique`
+  `--outSJfilterOverhangMin 150 150 150 150`
+  `--outFilterType BySJout`
+- Mismatch filtering: `--outFilterMismatchNoverReadLmax 0.01`
+- End-to-end alignment: `--alignEndsType EndToEnd`
+- Output sorted BAM files: `--outSAMtype BAM SortedByCoordinate`
+- Output transcriptome alignments: `--quantMode TranscriptomeSAM`
 
 > [!IMPORTANT]
-> _Organism-specific parameterization_
+> **Organism-specific parameterization**
 >
->These parameters were optimized for _Trypanosoma cruzi_ and must be adjusted for other organisms.
+> These parameters were optimized for *Trypanosoma cruzi* and must be adjusted for other organisms.
 >
-> _T. cruzi_: has a highly repetitive genome, particularly due to large multigene families.
->→ Therefore, --outFilterMultimapNmax 50 was set to allow a high number of valid multi-mapping alignments per read.
+> - *T. cruzi* has a highly repetitive genome, particularly due to large multigene families → `--outFilterMultimapNmax 50` was set to allow a high number of valid multi-mapping alignments per read.
+> - *T. cruzi* does not contain canonical introns → the splice-related parameters were configured to prevent artificial splice junction detection and avoid spliced alignments.
 >
-> _T. cruzi_ does not contain canonical introns.
->→ The splice-related parameters were configured to prevent artificial splice junction detection and avoid spliced alignments.
->
->For organisms with:
->
->Complex exon–intron structures → splice-aware parameters should be carefully optimized.
->
->Lower repetitiveness → a smaller --outFilterMultimapNmax value may be more appropriate.
-
+> For other organisms:
+> - **Complex exon–intron structures:** STAR's defaults are optimized for mammalian genomes (mainly human and mouse), so they will probably work better than the parameters above unless you plan a careful, organism-specific optimization.
+> - **Lower repetitiveness:** a smaller `--outFilterMultimapNmax` value may be more appropriate.
 
 **Salmon (alignment-based mode):**
-- Input: transcriptome-aligned BAM files from STAR  
-- Run with default parameters  
+- Input: transcriptome-projected BAM files from STAR
+- Run with default parameters
 
----
+### 3.2 Salmon (quasi-mapping mode)
 
-### 2. Salmon (quasi-mapping mode)
-
-This strategy uses **Salmon** directly with its **quasi-mapping algorithm**, without prior genome alignment.  
+This strategy uses **Salmon** directly with its quasi-mapping algorithm, without prior genome alignment.
 
 **Steps:**
-1. Index the genome and GTF annotation.  
-2. Run Salmon with paired-end reads.  
+1. Index the genome and GTF annotation.
+2. Run Salmon with paired-end reads.
 
 **Key parameters:**
-- Automatic library type detection: `-l A`  
-- Enable improved mapping validation: `--validateMappings`  
-- Default parameters for quantification  
+- Automatic library type detection: `-l A`
+- Improved mapping validation: `--validateMappings`
+- Default parameters for quantification
 
----
+### 3.3 Kallisto (pseudo-alignment mode)
 
-### 3. Kallisto (pseudo-alignment mode)
-
-This strategy uses **Kallisto** for fast quantification through pseudo-alignment.  
-Reads are aligned against the *T. cruzi* transcriptome FASTA.  
+This strategy uses **Kallisto** for fast quantification through pseudo-alignment against the *T. cruzi* transcriptome FASTA.
 
 **Steps:**
-1. Build Kallisto index from transcript FASTA.  
-2. Run Kallisto with paired-end reads.  
+1. Build the Kallisto index from the transcript FASTA.
+2. Run Kallisto with paired-end reads.
 
 **Key parameters:**
-- Default pseudo-alignment settings  
-- Input: transcriptome FASTA  
-
----
-
-📌 **Note:** All commands should be adapted to your file paths and computational environment. The provided parameters are optimized for the *T. cruzi* genome, which is highly repetitive and requires careful handling of multi-mapping reads.
-
----
-## Simulations with Polyester
-
-If you want to perform different RNA-seq simulations, we highly recommend using the [**Polyester**](https://github.com/alyssafrazee/polyester) R package.  
-
-### Requirements
-To run this pipeline, you will need:  
-- A **CSV file** containing the gene IDs and the expected number of reads for each gene.  
-- A **FASTA file** with the genome sequences and their corresponding IDs.  
-
-### Example
-Below we provide an example R script (_Simulation_example.R_) to run a simulation experiment with Polyester.  
-⚠️ Remember to replace all file paths in the script with the paths to your own input files.  
-
-
-```r
-################### Simulation in RNA-seq ######################
-
-################### 1. Install packages ########################
-if (!requireNamespace("BiocManager", quietly = TRUE))
-  install.packages("BiocManager")
-BiocManager::install("polyester")
-
-library(polyester)
-library(Biostrings)
-
-################### 2. Load CDS FASTA ##########################
-CDS_fasta <- readDNAStringSet(filepath = "FASTAPATH")
-writeXStringSet(CDS_fasta, "CDS.fasta")
-
-################### 3. Load read counts table ##################
-tabla_epi <- read.csv("TABLEPATH.CSV", sep = ",")
-
-################### 4. Prepare counts ##########################
-conteos_epi <- cbind.data.frame(tabla_epi$target_id, tabla_epi$est_counts)
-colnames(conteos_epi) <- c("gene_ID", "est_counts")
-
-# Example: use est_counts directly (can be scaled if needed)
-conteos_epi$cant_lecturas <- round(conteos_epi$est_counts, 0)
-
-################### 5. Create count matrix #####################
-countmat_epis <- matrix(conteos_epi$cant_lecturas,
-                        nrow = length(CDS_fasta), ncol = 1)
-
-write.csv(conteos_epi, "NEWTABLEPATH")
-
-################### 6. Run simulation ##########################
-simulate_experiment_countmat("CDS.fasta",
-                             readmat = countmat_epis,
-                             outdir = "OUTPUTPATH.FASTA")
-
-```
+- Default pseudo-alignment settings
+- Input: transcriptome FASTA
 
 > [!NOTE]
-> 
-> -Replace FASTAPATH, TABLEPATH.CSV, NEWTABLEPATH, and OUTPUTPATH.FASTA with the correct paths in your system.
->
-> -The column est_counts should represent the expected number of reads for each transcript.
->
-> -You can scale the counts if you want to simulate different sequencing depths (e.g., multiply est_counts by a factor).
+> All commands should be adapted to your file paths and computational environment. The provided parameters are optimized for the *T. cruzi* genome, which is highly repetitive and requires careful handling of multi-mapping reads.
 
-### Comparative overview of strategies for handling multi-mapping reads in RNA-seq
-
-#### Bulk RNA-seq approaches
-
-| Tool / Approach                                     | Type                              | Pros                                                                                                        | Cons                                                                                                                    | Recommended scenarios                                                                    |
-| --------------------------------------------------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| **Bowtie2 + featureCounts**                         | Alignment-based                   | Mature, widely used; generates alignments; flexible parameterization                                        | Retains many multimappers → inflated counts in repetitive regions; poor paralog resolution                              | Legacy workflows; need for BAM alignments; exploratory analyses                          |
-| **STAR + featureCounts**                            | Alignment-based                   | Fast splice-aware aligner; widely supported; used in Cell Ranger; flexible parameters                       | Handling of multimappers depends on settings; often discards or ambiguously assigns; sensitive to incomplete annotation | Large-scale alignment pipelines; downstream analyses requiring BAMs or junctions         |
-| **STAR + Salmon (hybrid)**                          | Hybrid alignment + quantifier     | Keeps alignments while benefiting from probabilistic quantification; good compromise between speed/accuracy | Sensitive to annotation quality; heavier computational burden than pure Salmon                                          | When alignments are required (QC, variant calling) but accurate quantification is needed |
-| **Salmon**                                          | Alignment-free (quasi-mapping)    | High accuracy; probabilistic assignment of multimappers; fast and memory-efficient                          | No full BAM alignments; cannot resolve perfect duplicates; sensitive to incomplete transcript models                    | General-purpose quantification; repetitive genomes with extended annotations             |
-| **Kallisto**                                        | Alignment-free (pseudoalignment)  | Extremely fast; good accuracy at transcript level; low resource requirements                                | Less flexible than Salmon; weaker handling of some biases; limited diagnostics                                          | Transcriptome-wide quantification; exploratory analyses at scale                         |
-| **MMquant**                                         | Alignment-based read reassignment | Redistributes multimappers across compatible features → maximizes data usage                                | Risk of overestimation in pseudogenes/poorly resolved paralogs; less adopted                                            | Multigene family studies where coverage retention is critical                            |
-| **STARconsensus**                                   | Alignment-based (haplotype-aware) | Allows haplotype-specific reference transformation; supports consensus genomes                              | Complex setup; not widely adopted; limited tools downstream                                                             | Studies with divergent haplotypes; allele-specific expression                            |
-| **Graph-based pangenomes (vg, Giraffe, minigraph)** | Graph aligners                    | Reduces reference bias; integrates haplotypes/structural variants; handles diversity                        | Still experimental in RNA-seq; complex to implement; computationally intensive                                          | Future-proof for highly polymorphic/repetitive species; pangenome projects               |
+<!-- Optional: case study with Florencia's data showing how each strategy performs on a multigene family -> docs/case_study.md -->
 
 ---
 
-#### Single-cell RNA-seq approaches
+## 4. UTR annotation
 
-| Tool / Approach                | Type                                     | Pros                                                                                               | Cons                                                                                     | Recommended scenarios                                                      |
-| ------------------------------ | ---------------------------------------- | -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| **Cell Ranger (10x)**          | Single-cell pipeline (STAR-based)        | Industry standard; robust UMI handling; reproducible outputs; discards multimappers conservatively | Underestimates expression of repetitive gene families; STAR dependency; black-box nature | Routine 10x scRNA-seq; clinical/industry-grade analyses                    |
-| **STARsolo**                   | Single-cell aligner (STAR-based)         | Transparent STAR-based pipeline; customizable multimapper handling                                 | Same multimapping limitations as STAR; heavier resource use                              | Alternative to Cell Ranger; when flexibility is needed in scRNA-seq        |
-| **Salmon-Alevin / Alevin-fry** | Single-cell quantifier (alignment-free)  | Efficient UMI-aware quantification; probabilistic handling of multimappers; lower memory footprint | Relatively new; fewer downstream wrappers than Cell Ranger                               | scRNA-seq with focus on quantification accuracy; repetitive transcriptomes |
-| **Kallisto + bustools**        | Single-cell quantifier (pseudoalignment) | Extremely fast; modular and memory-efficient; widely benchmarked                                   | Requires careful pre-processing; less user-friendly                                      | scRNA-seq at scale where speed and modularity are critical                 |
+In many organisms, annotation files such as GFFs typically include untranslated regions (UTRs). However, in some cases these annotations are absent. Incorporating UTRs during read mapping can be particularly useful to reduce ambiguity and, hence, multi-mapping in highly conserved regions. To address this limitation, we explored different computational strategies to infer UTRs.
 
+Several tools exist for UTR prediction, including **GETUTR** (Kim et al., 2015), [`UTRme`](https://github.com/sradiouy/UTRme) (Radío et al., 2018), **ExUTR** (Huang and Teeling, 2017) and **F3UTER** (Sethi et al., 2022). However, many of these are limited to specific organisms or depend on input formats that may not be available for non-model organisms. More recently, [`peaks2utr`](https://github.com/haessar/peaks2utr) (Haese-Hill et al., 2023) has been introduced as an organism-independent option for UTR prediction.
 
+#### General requirements
+- GFF/GTF annotation file (with or without existing 3′ UTR annotations)
+- Either RNA-seq FASTQ files or a BAM file with aligned reads, depending on the selected tool
 
+<sub>Some organisms, such as *T. cruzi*, do not provide GTF files. In such cases, [`gffread`](https://github.com/gpertea/gffread) can be used to generate a GTF from the reference genome and its corresponding GFF.</sub>
+
+#### Next steps
+After selecting the appropriate tool, integrate the predicted UTR coordinates into the original GFF annotation file.
+<!-- TODO: specify whether this was done with a tool or with custom scripts (and link them if so). -->
+
+---
+
+## 5. Simulations
+
+To perform RNA-seq simulations, we highly recommend the [**Polyester**](https://github.com/alyssafrazee/polyester) R package. It only requires a FASTA file with the transcript/CDS sequences and a table with the expected number of reads per gene, and lets you simulate different sequencing depths by scaling those counts.
+
+➡️ **Example script:** [scripts/Simulation_example.R](scripts/Simulation_example.R)
