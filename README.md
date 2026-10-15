@@ -24,6 +24,7 @@ Multi-mapping reads (i.e., reads that align equally well to more than one locati
 We provide approaches to estimate global and per-gene/per-transcript multi-mapping rates with **STAR**, **Salmon** and **Bowtie2**.
 
 ➡️ **How to run it:** [multimapping.md](multimapping.md)
+
 ---
 
 ## 2. Understanding the presence of highly similar genes and sequences
@@ -38,7 +39,7 @@ Genes with very high sequence identity to other genes in the genome (e.g., membe
 
 ## 3. Quantification strategies
 
-There is an abundance of strategies for handling multi-mapping reads, both for bulk and single-cell RNA-seq (see our [comparative overview of tools](docs/strategies_comparison.md)).
+There is an abundance of strategies for handling multi-mapping reads, both for bulk and single-cell RNA-seq (see our [comparative overview of tools](Overview_of_strategies_for_handling_multi-mapping.md)).
 
 As discussed in our manuscript, we found that the best-performing aligner–quantifier combinations, especially for highly repetitive genomes and for genes/transcripts with high sequence similarity, are those that assign multi-mapping reads probabilistically: **STAR + Salmon**, **Salmon** and **Kallisto**. In contrast, count-based approaches such as Bowtie2 + featureCounts strongly overestimated read counts for multigene families. Quantification error increased sharply for genes sharing more than ~98–99% identity with their closest paralog, and Salmon showed consistently lower error than Kallisto in that range.
 
@@ -133,4 +134,4 @@ After selecting the appropriate tool, integrate the predicted UTR coordinates in
 
 To perform RNA-seq simulations, we highly recommend the [**Polyester**](https://github.com/alyssafrazee/polyester) R package. It only requires a FASTA file with the transcript/CDS sequences and a table with the expected number of reads per gene, and lets you simulate different sequencing depths by scaling those counts.
 
-➡️ **Example script:** [scripts/Simulation_example.R](scripts/Simulation_example.R)
+➡️ **Example script:** [scripts/Simulation_example.R](Simulation_example.R)
