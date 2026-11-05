@@ -33,7 +33,7 @@ We provide approaches to estimate global and per-gene/per-transcript multi-mappi
 
 Genes with very high sequence identity to other genes in the genome (e.g., members of multigene families) are especially hard to quantify, since short reads often cannot be unambiguously assigned to a single copy. Knowing which genes of interest fall in this category helps interpret their expression estimates with the appropriate caution.
 
-➡️ **How to run it:** [docs/similar_sequences.md](docs/similar_sequences.md)
+➡️ **How to run it:** [similar_sequences.md](similar_sequences.md)
 
 ---
 
